@@ -1,0 +1,18 @@
+# Archivos de entorno
+.env
+.env.local
+.env.development
+.env.production
+.env.staging
+
+# Carpetas generadas
+node_modules/
+dist/
+build/
+
+# Archivos de logs
+*.log
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
