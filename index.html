@@ -29,9 +29,11 @@
       background: #dee9f3;
       min-height: 100vh;
       padding: 10px;
+      margin: 0;
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start;
+      overflow: auto;
     }
     .container {
       width: 100%;
@@ -39,9 +41,15 @@
       background: white;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(54, 75, 97, 0.15);
-      overflow: hidden;
       border: 1px solid #dee9f3;
     }
+
+    @media (min-width: 768px) {
+      .container {
+        max-width: 800px;
+      }
+    }
+
     .header {
       background: #025b93;
       color: white;
@@ -60,6 +68,14 @@
       font-size: 0.95rem;
       opacity: 0.9;
     }
+    /* Saludo personalizado */
+    #user-greeting {
+      color: #D8E6F2;
+      font-size: 0.7rem;
+      margin-top: 10px;
+      font-weight: 400;
+    }
+
     .content {
       padding: 20px;
     }
@@ -91,6 +107,7 @@
       border-color: #025b93;
       box-shadow: 0 0 0 3px rgba(2, 91, 147, 0.1);
     }
+
     .currency-selector {
       display: flex;
       gap: 10px;
@@ -113,23 +130,39 @@
       color: white;
       border-color: #025b93;
     }
+    .currency-btn:hover:not(.active) {
+      background: #cde4f2;
+      border-color: #025b93;
+      color: #025b93;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 6px rgba(2, 91, 147, 0.15);
+    }
+
     .section-group {
-      display: flex;
-      gap: 15px;
+      display: block;
       margin-top: 15px;
     }
     .section {
       min-width: 0;
+      width: 100%;
     }
     .section-chino {
-      flex: 0 0 35%;
-      max-width: 140px;
+      flex: 0 0 140px;
     }
     .section-producto {
-      flex: 0 0 65%;
+      flex: 1;
     }
 
-    /* Sección chino */
+    @media (min-width: 768px) {
+      .section-group {
+        display: flex;
+        gap: 20px;
+      }
+      .section {
+        width: auto;
+      }
+    }
+
     .radio-group-chino {
       display: flex;
       flex-direction: column;
@@ -157,23 +190,25 @@
       border-color: #025b93;
     }
 
-    /* Sección producto */
     .product-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
       margin-top: 5px;
     }
     .product-grid .radio-option {
-      padding: 10px 8px;
+      padding: 12px 16px;
       border: 2px solid #dee9f3;
       border-radius: 8px;
       text-align: center;
       cursor: pointer;
       background: #dee9f3;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       color: #364b61;
       transition: all 0.2s ease;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .product-grid .radio-option:hover {
       border-color: #025b93;
@@ -184,7 +219,6 @@
       border-color: #025b93;
     }
 
-    /* Opciones avanzadas */
     .advanced-toggle {
       font-size: 0.9rem;
       color: #025b93;
@@ -219,7 +253,6 @@
       margin-bottom: 10px;
     }
 
-    /* Plan de cuotas */
     .cuotas-selector {
       display: flex;
       gap: 8px;
@@ -410,137 +443,381 @@
       color: white;
     }
 
-    @media (max-width: 480px) {
-      .section-group {
-        flex-direction: column;
-        gap: 20px;
-      }
-      .section-chino, .section-producto {
-        flex: 1;
-        max-width: none;
-      }
-      .product-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-      .header h1 {
-        font-size: 1.4rem;
-      }
-      .content {
-        padding: 18px;
-      }
+    .logout-btn {
+      background: transparent;
+      border: none;
+      color: #9c27b0;
+      font-size: 0.8rem;
+      cursor: pointer;
+      padding: 6px 10px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 10px;
+      opacity: 0.8;
+    }
+    .logout-btn:hover {
+      background: rgba(156, 39, 176, 0.1);
+      opacity: 1;
+    }
+    .logout-btn i {
+      font-size: 0.9rem;
+    }
+
+    #login-container {
+      width: 100%;
+      max-width: 500px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(54, 75, 97, 0.15);
+      border: 1px solid #dee9f3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    #login-container .header {
+      background: #025b93;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      border-bottom: 4px solid #f36a10;
+      width: 100%;
+    }
+
+    #login-container .header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+      word-wrap: break-word;
+      line-height: 1.3;
+    }
+
+    #login-container .header p {
+      font-size: 0.95rem;
+      opacity: 0.9;
+    }
+
+    #login-container .content {
+      padding: 20px;
+      width: 100%;
+    }
+
+    #login-container .google-login-btn {
+      background: white;
+      color: #3367d6;
+      border: 1px solid #dadce0;
+      border-radius: 24px;
+      padding: 12px 24px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transition: all 0.2s ease;
+      margin-top: 10px;
+      font-weight: 500;
+    }
+
+    #login-container .google-login-btn:hover {
+      background: #f5f5f5;
+      transform: translateY(-2px);
+    }
+
+    #login-container .google-login-btn i {
+      font-size: 20px;
+      color: #3367d6;
+    }
+
+    /* Botón Solicitar Acceso */
+    .solicitar-acceso-btn {
+      background: white;
+      color: #25D366;
+      border: 1px solid #25D366;
+      border-radius: 24px;
+      padding: 12px 24px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transition: all 0.2s ease;
+      margin-top: 16px;
+      font-weight: 500;
+    }
+
+    .solicitar-acceso-btn:hover {
+      background: #f0f9f0;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(37, 211, 102, 0.2);
+    }
+
+    .solicitar-acceso-btn i {
+      font-size: 20px;
+      color: #25D366;
+    }
+
+    #login-container .login-error {
+      color: #d32f2f;
+      font-size: 14px;
+      margin-top: 12px;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <div id="root"></div> <!-- ⬅️ Este div es clave -->
-  <script type="module" src="/src/main.tsx"></script>
-  <div class="container">
+
+  <!-- PANTALLA DE LOGIN -->
+  <div id="login-container">
     <div class="header">
       <h1><i class="fas fa-car"></i> Cotizador de Seguro</h1>
       <p>Grupo Patrimoniales - Mauricio V</p>
     </div>
     <div class="content">
-      <div class="form-group">
-        <label for="marca">Marca del vehículo</label>
-        <div class="input-wrapper">
-          <input type="text" id="marca" placeholder="Ej. Toyota Rav4, Nissan March...">
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="valor">Valor comercial</label>
-        <div class="input-wrapper">
-          <input type="number" id="valor" placeholder="Ej. usd 25,000 ó bs 175,000...">
-        </div>
-        <div class="currency-selector">
-          <button class="currency-btn active" data-value="usd">USD ($)</button>
-          <button class="currency-btn" data-value="bs">Bolivianos (Bs)</button>
-        </div>
-      </div>
-      <div class="section-group">
-        <div class="section section-chino">
-          <label>¿Es chino?</label>
-          <div class="radio-group-chino">
-            <div class="radio-option-chino selected" data-name="chino" data-value="no">No</div>
-            <div class="radio-option-chino" data-name="chino" data-value="si">Sí</div>
-          </div>
-        </div>
-        <div class="section section-producto">
-          <label>Producto:</label>
-          <div class="product-grid">
-            <div class="radio-option selected" data-name="producto" data-value="autotal">Autotal 100</div>
-            <div class="radio-option" data-name="producto" data-value="vagoneta">Vagoneta Segura</div>
-            <div class="radio-option" data-name="producto" data-value="autotal500">Autotal 500</div>
-            <div class="radio-option" data-name="producto" data-value="pesado">A. Pesado</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Opciones avanzadas -->
-      <button type="button" class="advanced-toggle" onclick="toggleAdvanced()">
-        <i class="fas fa-cog"></i> Opciones avanzadas
+      <p style="color: #666; margin-bottom: 20px;">Accede para usar el cotizador</p>
+      <button id="google-login" class="google-login-btn">
+        <i class="fab fa-google"></i>
+        Iniciar con Google
       </button>
 
-      <div class="advanced-options" id="advancedOptions">
-        <label for="tasaPersonalizada">Tasa personalizada (%)</label>
-        <input type="number" id="tasaPersonalizada" step="0.001" placeholder="Ej. 3.2" value="3.2">
-
-        <label style="margin-top: 10px;">Plan de cuotas</label>
-        <div class="cuotas-selector" id="cuotasSelector">
-          <div class="cuota-option" data-cuotas="3">Inicial + 3 cuotas</div>
-          <div class="cuota-option" data-cuotas="4">Inicial + 4 cuotas</div>
-          <div class="cuota-option" data-cuotas="5">Inicial + 5 cuotas</div>
-          <div class="cuota-option selected" data-cuotas="6">Inicial + 6 cuotas</div>
-        </div>
-      </div>
-
-      <button class="calculate-btn" onclick="calcular()">
-        <i class="fas fa-calculator"></i> Calcular Cotización
+      <button id="solicitar-acceso-btn" class="solicitar-acceso-btn">
+        <i class="fas fa-key"></i>
+        Solicitar acceso
       </button>
-      <div class="resultado" id="resultado" style="display: none;"></div>
+
+      <p id="login-error" class="login-error"></p>
     </div>
   </div>
-  <div class="success-message" id="successMessage">
-    <i class="fas fa-check-circle"></i> ¡Cotización copiada!
+
+  <!-- COTIZADOR -->
+  <div id="app-container" style="display: none;">
+    <div class="container">
+      <div class="header">
+        <h1><i class="fas fa-car"></i> Cotizador de Seguro</h1>
+        <p>Grupo Patrimoniales - Mauricio V</p>
+        <p id="user-greeting" style="color: #D8E6F2; font-size: 0.7rem; margin-top: 10px; font-weight: 400;"></p>
+      </div>
+      <div class="content">
+        <div class="form-group">
+          <label for="marca">Marca del vehículo</label>
+          <div class="input-wrapper">
+            <input type="text" id="marca" placeholder="Ej. Toyota Rav4, Nissan March...">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="valor">Valor comercial</label>
+          <div class="input-wrapper">
+            <input type="number" id="valor" placeholder="Ej. usd 25,000 ó bs 175,000...">
+          </div>
+          <div class="currency-selector">
+            <button class="currency-btn active" data-value="usd">USD ($)</button>
+            <button class="currency-btn" data-value="bs">Bolivianos (Bs)</button>
+          </div>
+        </div>
+        <div class="section-group">
+          <div class="section section-chino">
+            <label>¿Es chino?</label>
+            <div class="radio-group-chino">
+              <div class="radio-option-chino selected" data-name="chino" data-value="no">No</div>
+              <div class="radio-option-chino" data-name="chino" data-value="si">Sí</div>
+            </div>
+          </div>
+          <div class="section section-producto">
+            <label>Producto:</label>
+            <div class="product-grid">
+              <div class="radio-option selected" data-name="producto" data-value="autotal">Autotal 100</div>
+              <div class="radio-option" data-name="producto" data-value="vagoneta">Vagoneta Segura</div>
+              <div class="radio-option" data-name="producto" data-value="autotal500">Autotal 500</div>
+              <div class="radio-option" data-name="producto" data-value="pesado">A. Pesado</div>
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="advanced-toggle" onclick="toggleAdvanced()">
+          <i class="fas fa-cog"></i> Opciones avanzadas
+        </button>
+
+        <div class="advanced-options" id="advancedOptions">
+          <label for="tasaPersonalizada">Tasa personalizada (%)</label>
+          <input type="number" id="tasaPersonalizada" step="0.001" placeholder="Ej. 3.2" value="3.2">
+          <label style="margin-top: 10px;">Plan de cuotas</label>
+          <div class="cuotas-selector" id="cuotasSelector">
+            <div class="cuota-option" data-cuotas="3">Inicial + 3 cuotas</div>
+            <div class="cuota-option" data-cuotas="4">Inicial + 4 cuotas</div>
+            <div class="cuota-option" data-cuotas="5">Inicial + 5 cuotas</div>
+            <div class="cuota-option selected" data-cuotas="6">Inicial + 6 cuotas</div>
+          </div>
+        </div>
+
+        <button class="calculate-btn" onclick="calcular()">
+          <i class="fas fa-calculator"></i> Calcular Cotización
+        </button>
+        <div class="resultado" id="resultado" style="display: none;"></div>
+        <button class="logout-btn" onclick="cerrarSesion()">
+          <i class="fas fa-sign-out-alt"></i> Salir
+        </button>
+      </div>
+    </div>
+    <div class="success-message" id="successMessage">
+      <i class="fas fa-check-circle"></i> ¡Cotización copiada!
+    </div>
   </div>
 
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDtaTADtibh1y-bbWCXVgY4akDZDoRV98Q",
+      authDomain: "cotizador-auto-grupomauricio.firebaseapp.com",
+      projectId: "cotizador-auto-grupomauricio",
+      storageBucket: "cotizador-auto-grupomauricio.firebasestorage.app",
+      messagingSenderId: "260731486696",
+      appId: "1:260731486696:web:b8dc1fbab4325600d0245d"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
+    const db = getFirestore();
+
+    let userName = "";
+
+    setPersistence(auth, browserLocalPersistence);
+
+    onAuthStateChanged(auth, async (user) => {
+      const loginPage = document.getElementById('login-container');
+      const appContainer = document.getElementById('app-container');
+      const body = document.body;
+      const userGreeting = document.getElementById('user-greeting');
+
+      if (user) {
+        const userEmail = user.email;
+        const userDoc = doc(db, "usuarios_autorizados", userEmail);
+
+        try {
+          const docSnap = await getDoc(userDoc);
+
+          if (docSnap.exists() && docSnap.data().activo) {
+            userName = user.displayName || user.email.split('@')[0];
+            window.userName = userName;
+
+            loginPage.style.display = 'none';
+            appContainer.style.display = 'block';
+            body.style.overflow = 'auto';
+            body.style.alignItems = 'flex-start';
+            userGreeting.textContent = `Bienvenid@ ${userName}`;
+            setupEventListeners();
+          } else {
+            mostrarAccesoDenegado();
+          }
+        } catch (error) {
+          console.error("Error al verificar autorización:", error);
+          mostrarAccesoDenegado();
+        }
+      } else {
+        appContainer.style.display = 'none';
+        loginPage.style.display = 'flex';
+        body.style.overflow = 'hidden';
+        body.style.alignItems = 'center';
+        if (userGreeting) userGreeting.textContent = '';
+        window.userName = "";
+      }
+    });
+
+    function mostrarAccesoDenegado() {
+      document.getElementById('login-container').innerHTML = `
+        <div style="text-align: center; padding: 30px; background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 400px;">
+          <i class="fas fa-ban" style="color: #d32f2f; font-size: 48px; margin-bottom: 16px;"></i>
+          <h3 style="color: #d32f2f; margin-bottom: 10px;">Acceso denegado</h3>
+          <p style="color: #555; margin-bottom: 20px;">
+            No tienes permiso para acceder a esta herramienta.
+          </p>
+          <p style="color: #666; font-size: 0.9rem;">
+            Favor de contactarse con el desarrollador.
+          </p>
+          <button id="cerrar-sesion-btn" style="margin-top: 20px; padding: 10px 20px; background: #025b93; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem;">
+            Cerrar sesión
+          </button>
+        </div>
+      `;
+
+      document.getElementById('cerrar-sesion-btn')?.addEventListener('click', async () => {
+        try {
+          await signOut(auth);
+          window.location.reload();
+        } catch (error) {
+          console.error("Error al cerrar sesión:", error);
+        }
+      });
+    }
+
+    document.getElementById('google-login')?.addEventListener('click', async () => {
+      try {
+        const provider = new GoogleAuthProvider();
+        await signInWithPopup(auth, provider);
+      } catch (error) {
+        document.getElementById('login-error').textContent = error.message;
+      }
+    });
+
+    document.getElementById('solicitar-acceso-btn')?.addEventListener('click', () => {
+      const mensaje = encodeURIComponent("Hola, quiero tener acceso al cotizador app de auto");
+      const url = `https://wa.me/59174928499?text=${mensaje}`;
+      window.open(url, '_blank');
+    });
+
+    window.cerrarSesion = async () => {
+      try {
+        await signOut(auth);
+        alert("✅ Sesión cerrada correctamente");
+      } catch (error) {
+        alert("Error al cerrar sesión: " + error.message);
+      }
+    };
+  </script>
+
+  <!-- Scripts del cotizador -->
   <script>
-    // Manejo de selección de moneda
-    document.querySelectorAll('.currency-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        document.querySelectorAll('.currency-btn').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-      });
-    });
-
-    // Manejo de selección de opciones "¿Es chino?"
-    document.querySelectorAll('.radio-option-chino').forEach(option => {
-      option.addEventListener('click', function() {
-        document.querySelectorAll('.radio-option-chino').forEach(opt => {
-          opt.classList.remove('selected');
+    function setupEventListeners() {
+      document.querySelectorAll('.currency-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.currency-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
         });
-        this.classList.add('selected');
       });
-    });
 
-    // Manejo de selección de producto
-    document.querySelectorAll('.product-grid .radio-option').forEach(option => {
-      option.addEventListener('click', function() {
-        document.querySelectorAll('.product-grid .radio-option').forEach(opt => {
-          opt.classList.remove('selected');
+      document.querySelectorAll('.radio-option-chino').forEach(option => {
+        option.addEventListener('click', function() {
+          document.querySelectorAll('.radio-option-chino').forEach(opt => opt.classList.remove('selected'));
+          this.classList.add('selected');
         });
-        this.classList.add('selected');
       });
-    });
 
-    // Manejo de selección de cuotas
-    document.querySelectorAll('.cuota-option').forEach(option => {
-      option.addEventListener('click', function() {
-        document.querySelectorAll('.cuota-option').forEach(opt => {
-          opt.classList.remove('selected');
+      document.querySelectorAll('.product-grid .radio-option').forEach(option => {
+        option.addEventListener('click', function() {
+          document.querySelectorAll('.product-grid .radio-option').forEach(opt => opt.classList.remove('selected'));
+          this.classList.add('selected');
         });
-        this.classList.add('selected');
       });
-    });
+
+      document.querySelectorAll('.cuota-option').forEach(option => {
+        option.addEventListener('click', function() {
+          document.querySelectorAll('.cuota-option').forEach(opt => opt.classList.remove('selected'));
+          this.classList.add('selected');
+        });
+      });
+    }
 
     function toggleAdvanced() {
       const advanced = document.getElementById('advancedOptions');
@@ -569,8 +846,13 @@
       }
     }
 
-    function copiarTexto(texto) {
-      navigator.clipboard.writeText(texto).then(() => {
+    function copiarTexto(textoOriginal) {
+      const nombre = window.userName || "Asesor";
+      const textoFinal = textoOriginal.replace(
+        /\*Nacional Seguros - Bolivia\*/,
+        `*Cotizado por:* ${nombre}\n*Nacional Seguros - Bolivia*`
+      );
+      navigator.clipboard.writeText(textoFinal).then(() => {
         const message = document.getElementById('successMessage');
         message.classList.add('show');
         setTimeout(() => {
@@ -581,8 +863,13 @@
       });
     }
 
-    function compartirWhatsApp(texto) {
-      const textoCodificado = encodeURIComponent(texto);
+    function compartirWhatsApp(textoOriginal) {
+      const nombre = window.userName || "Asesor";
+      const textoFinal = textoOriginal.replace(
+        /\*Nacional Seguros - Bolivia\*/,
+        `*Cotizado por:* ${nombre}\n*Nacional Seguros - Bolivia*`
+      );
+      const textoCodificado = encodeURIComponent(textoFinal);
       window.open(`https://wa.me/?text=${textoCodificado}`, '_blank');
     }
 
@@ -692,7 +979,7 @@
       resultadoDiv.style.display = 'block';
 
       setTimeout(() => {
-        document.querySelector('.container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        resultadoDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 100);
     }
 
@@ -721,15 +1008,6 @@
       document.querySelector('.cuota-option[data-cuotas="6"]').classList.add('selected');
 
       document.getElementById('advancedOptions').classList.remove('active');
-    }
-
-    // Registrar Service Worker
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js')
-          .then(reg => console.log('SW registrado'))
-          .catch(err => console.log('Error al registrar SW:', err));
-      });
     }
   </script>
 </body>
