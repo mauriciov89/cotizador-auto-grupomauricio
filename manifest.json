@@ -1,5 +1,5 @@
 {
-  "name": "Cotizador - Nacional Seguros",
+  "name": "Cotizador Automotor - Nacional Seguros",
   "short_name": "Cotizador Auto",
   "description": "Calcula seguros de auto en Nacional Seguros",
   "start_url": "./index.html",

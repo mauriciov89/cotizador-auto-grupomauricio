@@ -24,17 +24,21 @@
       margin: 0;
       padding: 0;
     }
-    body {
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 5px;
       font-family: 'Arial', sans-serif;
       background: #dee9f3;
-      min-height: 100vh;
-      padding: 10px;
-      margin: 0;
       display: flex;
       justify-content: center;
       align-items: flex-start;
       overflow: auto;
+      -webkit-overflow-scrolling: touch;
     }
+
     .container {
       width: 100%;
       max-width: 500px;
@@ -42,6 +46,10 @@
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(54, 75, 97, 0.15);
       border: 1px solid #dee9f3;
+      flex: 1;
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
     }
 
     @media (min-width: 768px) {
@@ -68,7 +76,7 @@
       font-size: 0.95rem;
       opacity: 0.9;
     }
-    /* Saludo personalizado */
+
     #user-greeting {
       color: #D8E6F2;
       font-size: 0.7rem;
@@ -78,7 +86,9 @@
 
     .content {
       padding: 20px;
+      flex: 1;
     }
+
     .form-group {
       margin-bottom: 20px;
     }
@@ -436,27 +446,23 @@
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      margin-top: 10px;
     }
     .clear-btn:hover {
       background: #025b93;
       color: white;
     }
-
     .logout-btn {
       background: transparent;
       border: none;
       color: #9c27b0;
       font-size: 0.8rem;
       cursor: pointer;
-      padding: 6px 10px;
+      padding: 8px 12px;
       border-radius: 8px;
       transition: all 0.2s ease;
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 4px;
-      margin-top: 10px;
-      opacity: 0.8;
+      gap: 5px;
     }
     .logout-btn:hover {
       background: rgba(156, 39, 176, 0.1);
@@ -535,7 +541,6 @@
       color: #3367d6;
     }
 
-    /* Botón Solicitar Acceso */
     .solicitar-acceso-btn {
       background: white;
       color: #25D366;
@@ -572,6 +577,102 @@
       margin-top: 12px;
       text-align: center;
     }
+
+    /* Historial Modal */
+    .historial-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .historial-content {
+      background: white;
+      width: 90%;
+      max-width: 500px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .historial-header {
+      background: #025b93;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.1rem;
+    }
+
+    .historial-header h3 {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .cerrar-modal {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cerrar-modal:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+    }
+
+    #historial-lista {
+      padding: 10px 20px;
+      max-height: 400px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .historial-item {
+      background: #f9f9f9;
+      padding: 12px;
+      border-radius: 8px;
+      border-left: 3px solid #025b93;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .historial-item strong {
+      color: #025b93;
+      font-weight: 600;
+    }
+
+    .historial-item .fecha {
+      font-size: 0.8rem;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    .historial-footer {
+      padding: 15px 20px;
+      text-align: right;
+      border-top: 1px solid #eee;
+      background: #f5f5f5;
+      border-radius: 0 0 12px 12px;
+    }
   </style>
 </head>
 <body>
@@ -588,12 +689,10 @@
         <i class="fab fa-google"></i>
         Iniciar con Google
       </button>
-
       <button id="solicitar-acceso-btn" class="solicitar-acceso-btn">
         <i class="fas fa-key"></i>
         Solicitar acceso
       </button>
-
       <p id="login-error" class="login-error"></p>
     </div>
   </div>
@@ -661,14 +760,39 @@
         <button class="calculate-btn" onclick="calcular()">
           <i class="fas fa-calculator"></i> Calcular Cotización
         </button>
+
+        <!-- Botones fijos: historial a la izquierda, salir a la derecha -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; width: 100%;">
+          <button class="clear-btn" id="ver-historial-btn">
+            <i class="fas fa-history"></i> Historial
+          </button>
+          <button class="logout-btn" onclick="cerrarSesion()">
+            <i class="fas fa-sign-out-alt"></i> Salir
+          </button>
+        </div>
+
         <div class="resultado" id="resultado" style="display: none;"></div>
-        <button class="logout-btn" onclick="cerrarSesion()">
-          <i class="fas fa-sign-out-alt"></i> Salir
-        </button>
       </div>
     </div>
+
     <div class="success-message" id="successMessage">
       <i class="fas fa-check-circle"></i> ¡Cotización copiada!
+    </div>
+  </div>
+
+  <!-- Modal de Historial -->
+  <div id="historial-modal" class="historial-modal">
+    <div class="historial-content">
+      <div class="historial-header">
+        <h3>📋 Historial de Cotizaciones</h3>
+        <button id="cerrar-historial" class="cerrar-modal">&times;</button>
+      </div>
+      <div id="historial-lista"></div>
+      <div class="historial-footer">
+        <button id="limpiar-historial" class="clear-btn" style="font-size: 0.85rem; padding: 6px 10px;">
+          <i class="fas fa-trash"></i> Limpiar historial
+        </button>
+      </div>
     </div>
   </div>
 
@@ -691,8 +815,6 @@
     const auth = getAuth();
     const db = getFirestore();
 
-    let userName = "";
-
     setPersistence(auth, browserLocalPersistence);
 
     onAuthStateChanged(auth, async (user) => {
@@ -707,58 +829,40 @@
 
         try {
           const docSnap = await getDoc(userDoc);
-
           if (docSnap.exists() && docSnap.data().activo) {
-            userName = user.displayName || user.email.split('@')[0];
-            window.userName = userName;
-
             loginPage.style.display = 'none';
             appContainer.style.display = 'block';
             body.style.overflow = 'auto';
             body.style.alignItems = 'flex-start';
-            userGreeting.textContent = `Bienvenid@ ${userName}`;
-            setupEventListeners();
+            const displayName = user.displayName || user.email.split('@')[0];
+            window.userName = displayName;
+            if (userGreeting) userGreeting.textContent = `Bienvenid@ ${displayName}`;
           } else {
-            mostrarAccesoDenegado();
+            mostrarAccesoDenegado("No tienes acceso autorizado.");
           }
         } catch (error) {
-          console.error("Error al verificar autorización:", error);
-          mostrarAccesoDenegado();
+          mostrarAccesoDenegado("Error de conexión.");
         }
       } else {
         appContainer.style.display = 'none';
         loginPage.style.display = 'flex';
         body.style.overflow = 'hidden';
         body.style.alignItems = 'center';
-        if (userGreeting) userGreeting.textContent = '';
-        window.userName = "";
       }
     });
 
-    function mostrarAccesoDenegado() {
+    function mostrarAccesoDenegado(mensaje) {
       document.getElementById('login-container').innerHTML = `
         <div style="text-align: center; padding: 30px; background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 400px;">
           <i class="fas fa-ban" style="color: #d32f2f; font-size: 48px; margin-bottom: 16px;"></i>
           <h3 style="color: #d32f2f; margin-bottom: 10px;">Acceso denegado</h3>
-          <p style="color: #555; margin-bottom: 20px;">
-            No tienes permiso para acceder a esta herramienta.
-          </p>
-          <p style="color: #666; font-size: 0.9rem;">
-            Favor de contactarse con el desarrollador.
-          </p>
-          <button id="cerrar-sesion-btn" style="margin-top: 20px; padding: 10px 20px; background: #025b93; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem;">
-            Cerrar sesión
-          </button>
+          <p style="color: #555; margin-bottom: 20px;">${mensaje}</p>
+          <button id="cerrar-sesion-btn" style="margin-top: 20px; padding: 10px 20px; background: #025b93; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem;">Cerrar sesión</button>
         </div>
       `;
-
       document.getElementById('cerrar-sesion-btn')?.addEventListener('click', async () => {
-        try {
-          await signOut(auth);
-          window.location.reload();
-        } catch (error) {
-          console.error("Error al cerrar sesión:", error);
-        }
+        await signOut(auth);
+        window.location.reload();
       });
     }
 
@@ -773,8 +877,7 @@
 
     document.getElementById('solicitar-acceso-btn')?.addEventListener('click', () => {
       const mensaje = encodeURIComponent("Hola, quiero tener acceso al cotizador app de auto");
-      const url = `https://wa.me/59174928499?text=${mensaje}`;
-      window.open(url, '_blank');
+      window.open(`https://wa.me/59174928499?text=${mensaje}`, '_blank');
     });
 
     window.cerrarSesion = async () => {
@@ -782,43 +885,13 @@
         await signOut(auth);
         alert("✅ Sesión cerrada correctamente");
       } catch (error) {
-        alert("Error al cerrar sesión: " + error.message);
+        alert("Error: " + error.message);
       }
     };
   </script>
 
   <!-- Scripts del cotizador -->
   <script>
-    function setupEventListeners() {
-      document.querySelectorAll('.currency-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-          document.querySelectorAll('.currency-btn').forEach(b => b.classList.remove('active'));
-          this.classList.add('active');
-        });
-      });
-
-      document.querySelectorAll('.radio-option-chino').forEach(option => {
-        option.addEventListener('click', function() {
-          document.querySelectorAll('.radio-option-chino').forEach(opt => opt.classList.remove('selected'));
-          this.classList.add('selected');
-        });
-      });
-
-      document.querySelectorAll('.product-grid .radio-option').forEach(option => {
-        option.addEventListener('click', function() {
-          document.querySelectorAll('.product-grid .radio-option').forEach(opt => opt.classList.remove('selected'));
-          this.classList.add('selected');
-        });
-      });
-
-      document.querySelectorAll('.cuota-option').forEach(option => {
-        option.addEventListener('click', function() {
-          document.querySelectorAll('.cuota-option').forEach(opt => opt.classList.remove('selected'));
-          this.classList.add('selected');
-        });
-      });
-    }
-
     function toggleAdvanced() {
       const advanced = document.getElementById('advancedOptions');
       advanced.classList.toggle('active');
@@ -846,29 +919,87 @@
       }
     }
 
+    function guardarEnHistorial(cotizacion) {
+      try {
+        let historial = JSON.parse(localStorage.getItem('cotizaciones')) || [];
+        const nueva = {
+          marca: cotizacion.marca,
+          valorBs: cotizacion.valorBs,
+          producto: cotizacion.producto,
+          primaContado: cotizacion.primaContado,
+          primaCredito: cotizacion.primaCredito,
+          cuotaInicial: cotizacion.cuotaInicial,
+          cuotas: cotizacion.cuotas,
+          cuota: cotizacion.cuota,
+          fecha: new Date().toLocaleString('es-BO', {
+            day: '2-digit',
+            month: '2-digit',
+            year: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+          })
+        };
+        historial.unshift(nueva);
+        historial = historial.slice(0, 5);
+        localStorage.setItem('cotizaciones', JSON.stringify(historial));
+      } catch (e) {
+        console.error("Error guardando en historial:", e);
+      }
+    }
+
+    function mostrarHistorial() {
+      const modal = document.getElementById('historial-modal');
+      const lista = document.getElementById('historial-lista');
+      if (!modal || !lista) return;
+
+      lista.innerHTML = '';
+      try {
+        const historial = JSON.parse(localStorage.getItem('cotizaciones')) || [];
+        if (historial.length === 0) {
+          lista.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No hay cotizaciones</p>';
+        } else {
+          historial.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'historial-item';
+            div.innerHTML = `
+              <strong>${item.marca}</strong><br>
+              <span><strong>Producto:</strong> ${obtenerNombreProducto(item.producto)}</span><br>
+              <span><strong>Valor:</strong> Bs ${formatoMiles(item.valorBs)}</span><br>
+              <span><strong>Prima Contado:</strong> Bs ${formatoMiles(item.primaContado)}</span><br>
+              <span><strong>Prima Crédito:</strong> Bs ${formatoMiles(item.primaCredito)}</span><br>
+              <span><strong>Cuota Inicial:</strong> Bs ${formatoMiles(item.cuotaInicial)}</span><br>
+              <span><strong>${item.cuotas} cuotas de:</strong> Bs ${formatoMiles(item.cuota)}</span><br>
+              <span class="fecha">${item.fecha}</span>
+            `;
+            lista.appendChild(div);
+          });
+        }
+        modal.style.display = 'flex';
+      } catch (e) {
+        lista.innerHTML = '<p style="color: red; padding: 10px;">Error al cargar</p>';
+      }
+    }
+
+    function limpiarHistorial() {
+      if (confirm("¿Limpiar historial?")) {
+        localStorage.removeItem('cotizaciones');
+        document.getElementById('historial-lista').innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">Vacío</p>';
+      }
+    }
+
     function copiarTexto(textoOriginal) {
       const nombre = window.userName || "Asesor";
-      const textoFinal = textoOriginal.replace(
-        /\*Nacional Seguros - Bolivia\*/,
-        `*Cotizado por:* ${nombre}\n*Nacional Seguros - Bolivia*`
-      );
+      const textoFinal = textoOriginal.replace(/\*Nacional Seguros - Bolivia\*/, `*Cotizado por:* ${nombre}\n*Nacional Seguros - Bolivia*`);
       navigator.clipboard.writeText(textoFinal).then(() => {
-        const message = document.getElementById('successMessage');
-        message.classList.add('show');
-        setTimeout(() => {
-          message.classList.remove('show');
-        }, 2000);
-      }).catch(err => {
-        alert("No se pudo copiar");
+        if (navigator.vibrate) navigator.vibrate(100);
+        document.getElementById('successMessage').classList.add('show');
+        setTimeout(() => document.getElementById('successMessage').classList.remove('show'), 2000);
       });
     }
 
     function compartirWhatsApp(textoOriginal) {
       const nombre = window.userName || "Asesor";
-      const textoFinal = textoOriginal.replace(
-        /\*Nacional Seguros - Bolivia\*/,
-        `*Cotizado por:* ${nombre}\n*Nacional Seguros - Bolivia*`
-      );
+      const textoFinal = textoOriginal.replace(/\*Nacional Seguros - Bolivia\*/, `*Cotizado por:* ${nombre}\n*Nacional Seguros - Bolivia*`);
       const textoCodificado = encodeURIComponent(textoFinal);
       window.open(`https://wa.me/?text=${textoCodificado}`, '_blank');
     }
@@ -882,7 +1013,7 @@
       const resultadoDiv = document.getElementById("resultado");
 
       if (!marca || !valorInput) {
-        resultadoDiv.innerHTML = `<div class="error"><i class="fas fa-exclamation-circle"></i> ERROR: Complete todos los campos</div>`;
+        resultadoDiv.innerHTML = `<div class="error"><i class="fas fa-exclamation-circle"></i> Complete todos los campos</div>`;
         resultadoDiv.style.display = 'block';
         return;
       }
@@ -908,7 +1039,6 @@
       if (primaContado < 4200) primaContado = esChino === 'si' ? 4620 : 4200;
 
       const primaCredito = primaContado * 1.10;
-
       let cuotas = 6;
       if (advanced.classList.contains('active')) {
         cuotas = parseInt(document.querySelector('.cuota-option.selected').getAttribute('data-cuotas'));
@@ -919,22 +1049,7 @@
       let cuota = Math.floor((saldo / cuotas) / 5) * 5;
       cuotaInicial = primaCredito - (cuota * cuotas);
 
-      const textoResultado =
-`*Cotización de Seguro Automotor*
-    
-*Producto:* ${obtenerNombreProducto(producto)}
-*Vehículo:* ${marca}
-*Valor:* Bs ${formatoMiles(valorBs)} ($${formatoMiles(valorUSD)})
-
-*Prima:*
-*• Contado:* Bs ${formatoMiles(primaContado)}
-*• Crédito:* Bs ${formatoMiles(primaCredito)}
-
-*Plan de Pagos:*
-*• Cuota Inicial:* Bs ${formatoMiles(cuotaInicial)}
-*• ${cuotas} Cuotas de:* Bs ${formatoMiles(cuota)}
-
-*Nacional Seguros - Bolivia*`;
+      const textoResultado = `*Cotización de Seguro Automotor*\n\n*Producto:* ${obtenerNombreProducto(producto)}\n*Vehículo:* ${marca}\n*Valor:* Bs ${formatoMiles(valorBs)} ($${formatoMiles(valorUSD)})\n\n*Prima:*\n*• Contado:* Bs ${formatoMiles(primaContado)}\n*• Crédito:* Bs ${formatoMiles(primaCredito)}\n\n*Plan de Pagos:*\n*• Cuota Inicial:* Bs ${formatoMiles(cuotaInicial)}\n*• ${cuotas} Cuotas de:* Bs ${formatoMiles(cuota)}\n\n*Nacional Seguros - Bolivia*`;
 
       resultadoDiv.innerHTML = `
         <div class="resultado-header">
@@ -944,30 +1059,13 @@
           </button>
         </div>
         <div class="resultado-content">
-          <div class="resultado-item">
-            <strong>Producto:</strong> <span>${obtenerNombreProducto(producto)}</span>
-          </div>
-          <div class="resultado-item">
-            <strong>Vehículo:</strong> <span>${marca}</span>
-          </div>
-          <div class="resultado-item">
-            <strong>Valor comercial:</strong> <span>Bs ${formatoMiles(valorBs)} (${formatoMiles(valorUSD)} USD)</span>
-          </div>
-          <div class="resultado-item strong">
-            <strong>PRIMA</strong>
-          </div>
-          <div class="resultado-item">
-            <strong>Contado:</strong> <span>Bs ${formatoMiles(primaContado)}</span>
-          </div>
-          <div class="resultado-item">
-            <strong>Crédito:</strong> <span>Bs ${formatoMiles(primaCredito)}</span>
-          </div>
-          <div class="resultado-item">
-            <strong>Cuota inicial:</strong> <span>Bs ${formatoMiles(cuotaInicial)}</span>
-          </div>
-          <div class="resultado-item">
-            <strong>${cuotas} cuotas de:</strong> <span>Bs ${formatoMiles(cuota)}</span>
-          </div>
+          <div class="resultado-item"><strong>Producto:</strong> <span>${obtenerNombreProducto(producto)}</span></div>
+          <div class="resultado-item"><strong>Vehículo:</strong> <span>${marca}</span></div>
+          <div class="resultado-item"><strong>Valor comercial:</strong> <span>Bs ${formatoMiles(valorBs)} (${formatoMiles(valorUSD)} USD)</span></div>
+          <div class="resultado-item"><strong>Contado:</strong> <span>Bs ${formatoMiles(primaContado)}</span></div>
+          <div class="resultado-item"><strong>Crédito:</strong> <span>Bs ${formatoMiles(primaCredito)}</span></div>
+          <div class="resultado-item"><strong>Cuota inicial:</strong> <span>Bs ${formatoMiles(cuotaInicial)}</span></div>
+          <div class="resultado-item"><strong>${cuotas} cuotas de:</strong> <span>Bs ${formatoMiles(cuota)}</span></div>
         </div>
         <button class="whatsapp-btn" onclick="compartirWhatsApp(\`${textoResultado}\`)">
           <i class="fab fa-whatsapp"></i> Compartir por WhatsApp
@@ -978,9 +1076,9 @@
       `;
       resultadoDiv.style.display = 'block';
 
-      setTimeout(() => {
-        resultadoDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
+      guardarEnHistorial({ marca, valorBs, producto, primaContado, primaCredito, cuotaInicial, cuotas, cuota });
+
+      setTimeout(() => resultadoDiv.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
     }
 
     function limpiarFormulario() {
@@ -989,26 +1087,88 @@
       document.getElementById("resultado").style.display = 'none';
       document.getElementById('tasaPersonalizada').value = '3.2';
 
-      document.querySelector('.currency-btn.active').classList.remove('active');
+      // Restablecer moneda a USD
+      document.querySelectorAll('.currency-btn').forEach(b => b.classList.remove('active'));
       document.querySelector('.currency-btn[data-value="usd"]').classList.add('active');
 
-      document.querySelectorAll('.radio-option-chino').forEach(opt => {
-        opt.classList.remove('selected');
-      });
+      // Restablecer chino
+      document.querySelectorAll('.radio-option-chino').forEach(opt => opt.classList.remove('selected'));
       document.querySelector('.radio-option-chino[data-value="no"]').classList.add('selected');
 
-      document.querySelectorAll('.product-grid .radio-option').forEach(opt => {
-        opt.classList.remove('selected');
-      });
+      // Restablecer producto
+      document.querySelectorAll('.product-grid .radio-option').forEach(opt => opt.classList.remove('selected'));
       document.querySelector('.product-grid .radio-option[data-value="autotal"]').classList.add('selected');
 
-      document.querySelectorAll('.cuota-option').forEach(opt => {
-        opt.classList.remove('selected');
-      });
+      // Restablecer cuotas
+      document.querySelectorAll('.cuota-option').forEach(opt => opt.classList.remove('selected'));
       document.querySelector('.cuota-option[data-cuotas="6"]').classList.add('selected');
 
+      // Ocultar avanzado
       document.getElementById('advancedOptions').classList.remove('active');
     }
+
+    // Evento delegado para los botones de moneda
+    document.addEventListener('click', (e) => {
+      if (e.target.classList.contains('currency-btn')) {
+        document.querySelectorAll('.currency-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+      }
+    });
+
+    // Eventos para otros botones
+    document.addEventListener('click', (e) => {
+      if (e.target.classList.contains('radio-option-chino')) {
+        document.querySelectorAll('.radio-option-chino').forEach(opt => opt.classList.remove('selected'));
+        e.target.classList.add('selected');
+      }
+      if (e.target.classList.contains('radio-option') && e.target.closest('.product-grid')) {
+        document.querySelectorAll('.product-grid .radio-option').forEach(opt => opt.classList.remove('selected'));
+        e.target.classList.add('selected');
+      }
+      if (e.target.classList.contains('cuota-option')) {
+        document.querySelectorAll('.cuota-option').forEach(opt => opt.classList.remove('selected'));
+        e.target.classList.add('selected');
+      }
+    });
+
+    function esperarYAsignarEventos() {
+      const verHistorialBtn = document.getElementById('ver-historial-btn');
+      const cerrarHistorialBtn = document.getElementById('cerrar-historial');
+      const limpiarHistorialBtn = document.getElementById('limpiar-historial');
+      const historialModal = document.getElementById('historial-modal');
+
+      if (verHistorialBtn) {
+        verHistorialBtn.addEventListener('click', mostrarHistorial);
+      } else {
+        setTimeout(esperarYAsignarEventos, 100);
+        return;
+      }
+
+      if (cerrarHistorialBtn) {
+        cerrarHistorialBtn.addEventListener('click', () => {
+          if (historialModal) historialModal.style.display = 'none';
+        });
+      }
+
+      if (limpiarHistorialBtn) {
+        limpiarHistorialBtn.addEventListener('click', limpiarHistorial);
+      }
+
+      window.addEventListener('click', (e) => {
+        if (e.target === historialModal) {
+          historialModal.style.display = 'none';
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', esperarYAsignarEventos);
+
+    window.copiarTexto = copiarTexto;
+    window.compartirWhatsApp = compartirWhatsApp;
+    window.calcular = calcular;
+    window.limpiarFormulario = limpiarFormulario;
+    window.toggleAdvanced = toggleAdvanced;
+    window.mostrarHistorial = mostrarHistorial;
   </script>
 </body>
 </html>
